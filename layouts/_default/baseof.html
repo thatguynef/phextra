@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="{{ or site.Language.LanguageCode site.Language.Lang }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }} | {{ site.Title }}{{ end }}</title>
+  
+  {{ partial "theme-toggle-script.html" . }}
+
+  {{ partial "head.html" . }}
+
+  {{ $style := resources.Get "css/main.css" }}
+  {{ if $style }}
+    {{ $style = $style | resources.Minify }}
+    <style>
+      {{ $style.Content | safeCSS }}
+    </style>
+  {{ end }}
+
+  {{ $aiStyle := resources.Get "css/ask-ai.css" | minify | fingerprint }}
+  <link rel="stylesheet" href="{{ $aiStyle.RelPermalink }}">
+
+  <script src="/assets/js/vendor/flexsearch.bundle.js"></script>
+</head>
+<body class="antialiased">
+  
+  <div class="app-container">
+    {{ partial "banner.html" . }}
+
+    {{ partial "header.html" . }}
+
+    {{/* --- LAYOUT LOGIC START --- */}}
+    {{ $isDocs := eq .Type "docs" }}
+    
+    {{/* Check if we are in the posts section list */}}
+    {{ $isPostsList := and (eq .Type "posts") (eq .Kind "section") }}
+    
+    {{/* Check if we are on a single post */}}
+    {{ $isPostSingle := and (eq .Type "posts") (eq .Kind "page") }}
+    
+    {{/* Check if we are on a tag or category page */}}
+    {{ $isTerm := eq .Kind "term" }} 
+    
+    {{/* Combine them to decide if right sidebar is needed */}}
+    {{ $showRightSidebar := or $isPostsList $isPostSingle $isTerm }}
+    {{/* --- LAYOUT LOGIC END --- */}}
+    
+    <div class="main-container {{ if $showRightSidebar }}right-sidebar-only{{ else if not $isDocs }}wide{{ end }}">
+      
+      <!-- Left Sidebar: Navigation -->
+      <aside class="sidebar-left">
+
+        <nav class="sidebar-nav">
+          
+          {{ if eq .Type "docs" }}
+            {{ $root := .FirstSection }}
+            
+            <!-- 1. Main Recursive Tree -->
+            <div class="sidebar-section-title">{{ $root.Title }}</div>
+            {{ partial "docs-menu.html" (dict "context" . "scope" $root) }}
+
+            <!-- 2. "More" Section -->
+            {{ if site.Menus.sidebar_more }}
+              <div class="sidebar-spacer">
+                <div class="sidebar-section-title">More</div>
+                <ul class="sidebar-list">
+                  {{ range site.Menus.sidebar_more }}
+                    <li>
+                      <a href="{{ .URL }}" 
+                         class="sidebar-link" 
+                         {{ if .Params.external }}target="_blank" rel="noopener"{{ end }}>
+                        {{ .Name }}
+                        {{ if .Params.external }}
+                          <span class="icon-inline">
+                            {{ partial "icon.html" "arrow-up-right" }}
+                          </span>
+                        {{ end }}
+                      </a>
+                    </li>
+                  {{ end }}
+                </ul>
+              </div>
+            {{ end }}
+
+            {{ partial "sidebar-socials.html" . }}
+
+            {{ partial "email-form.html" . }}
+
+            {{ else }}
+              <p class="sidebar-fallback-text">Select a documentation section from the top menu.</p>
+            {{ end }}
+
+        </nav>
+
+      </aside>
+
+      <!-- Main Content Area -->
+      <main class="content-wrapper">
+        {{ block "main" . }}{{ end }}
+      </main>
+
+      <!-- Right Sidebar: TOC or Widgets -->
+      <aside class="sidebar-right">
+        {{ block "toc" . }}{{ end }}
+      </aside>
+
+    </div>
+
+    {{ partial "footer.html" . }}
+
+    <!-- Mobile Navigation Overlay -->
+    <div class="mobile-nav-overlay">
+      <nav>
+        
+        <!-- 1. Mobile Search Bar -->
+        <!-- Note: The 'Ask AI' button is now in header.html, so this remains just a search input -->
+        <div class="mobile-search-wrapper">
+           <!-- Isolated Container for Input + Icon -->
+           <div class="mobile-input-container">
+             <span class="mobile-search-icon">
+               {{ partial "icon.html" "search" }}
+             </span>
+             <input type="text" id="search-input-mobile" class="mobile-search-input" placeholder="Search..." autocomplete="off">
+           </div>
+           
+           <!-- Results Container -->
+           <div id="search-results-mobile" class="search-results mobile-search-results"></div>
+        </div>
+
+        <!-- 2. Global Links (About, Portfolio, etc) -->
+        <div class="mobile-nav-links">
+          {{ range site.Menus.global }}
+            <a href="{{ .URL }}" class="mobile-nav-link">{{ .Name }}</a>
+          {{ end }}
+        </div>
+        
+        <hr class="mobile-divider">
+
+        <!-- 3. Section Links (Docs, Integrations) -->
+        <div class="mobile-nav-links">
+          {{ range site.Menus.sections }}
+            <a href="{{ .URL }}" class="mobile-nav-link section-item">{{ .Name }}</a>
+          {{ end }}
+        </div>
+
+        <hr class="mobile-divider">
+        
+        <!-- 4. Sidebar Tree (Only if in docs) -->
+        {{ if eq .Type "docs" }}
+          <div class="sidebar-nav">
+             <div class="sidebar-section-title">{{ .FirstSection.Title }}</div>
+             {{ partial "docs-menu.html" (dict "context" . "scope" .FirstSection) }}
+          </div>
+        {{ end }}
+        
+        <div style="margin-bottom: 2rem;">
+          {{ partial "sidebar-socials.html" . }}
+          
+          <!-- Mobile Specific Email Form -->
+          <div class="mobile-menu-email">
+            {{ partial "email-form.html" . }}
+          </div>
+        </div>
+      </nav>
+    </div>
+
+  </div>
+
+  {{ $script := resources.Get "js/main.js" }}
+  {{ if $script }}
+    {{ $script = $script | resources.Minify | resources.Fingerprint }}
+    <script src="{{ $script.RelPermalink }}"></script>
+  {{ end }}
+  {{ partial "encharge-script.html" . }}
+  {{ partial "ask-ai.html" . }}
+  {{ $aiScript := resources.Get "js/ask-ai.js" | minify | fingerprint }}
+  <script src="{{ $aiScript.RelPermalink }}"></script>
+</body>
+</html>

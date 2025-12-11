@@ -1,0 +1,105 @@
+/* --- 2. The Slide-out Panel --- */
+.ask-ai-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: var(--ai-panel-width);
+  height: 100vh;
+  background-color: var(--ai-panel-bg);
+  border-left: 1px solid var(--ai-panel-border);
+  z-index: var(--ai-z-index);
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  box-shadow: 0 0 0 0 transparent; 
+  transition: transform var(--ai-transition-speed) cubic-bezier(0.16, 1, 0.3, 1),
+              width var(--ai-transition-speed) ease-in-out,
+              box-shadow var(--ai-transition-speed) ease-in-out;
+}
+
+/* Open State */
+.ask-ai-panel.is-open {
+  transform: translateX(0);
+  /* ADDED: Apply the shadow only when open */
+  box-shadow: var(--ai-sidebar-box-shadow);
+}
+
+
+/* Expanded State (Wide Mode) */
+.ask-ai-panel.is-expanded {
+  width: 700px; /* Adjust based on your 'On this page' sidebar width */
+  max-width: 90vw;
+}
+
+/* --- 3. Panel Header --- */
+.ask-ai-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--ai-panel-border);
+  background-color: var(--ai-panel-bg);
+}
+
+.ask-ai-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--ai-text-color);
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.ask-ai-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ask-ai-icon-btn {
+  background: transparent;
+  border: none;
+  color: #888;
+  cursor: pointer;
+  padding: 0.4rem;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s, background 0.2s;
+}
+
+.ask-ai-icon-btn:hover {
+  color: var(--ai-text-color);
+  background-color: rgba(255,255,255,0.05);
+}
+
+/* --- 4. Panel Content (Typebot Area) --- */
+.ask-ai-content {
+  flex: 1;
+  position: relative;
+  overflow: hidden; 
+  background-color: var(--bg-primary); /* Placeholder bg */
+}
+
+/* --- 5. Mobile Responsiveness --- */
+@media (max-width: 768px) {
+  .ask-ai-panel {
+    /* On mobile, cover the full screen or leave a small gap at top */
+    width: 100%;
+    top: 0px; /* Adjust based on your mobile navbar height */
+    height: calc(100vh - 60px); 
+    border-left: none;
+    border-top: 1px solid var(--ai-panel-border);
+  }
+  
+  /* Disable width expansion on mobile since it's already full width */
+  .ask-ai-panel.is-expanded {
+    width: 100%; 
+  }
+
+  /* Hide the expand button on mobile */
+  #ask-ai-expand {
+    display: none;
+  }
+}

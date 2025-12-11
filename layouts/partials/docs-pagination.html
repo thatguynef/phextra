@@ -1,0 +1,82 @@
+{{ $current := . }}
+{{ $prev := false }}
+{{ $next := false }}
+{{ $scratch := newScratch }}
+{{ $scratch.Add "bookList" slice }}
+
+{{/* 1. Get the root Docs section */}}
+{{ $root := site.GetPage "/docs" }}
+
+{{/* 2. Define a recursive template to flatten the tree in Sidebar order */}}
+{{ define "walk-tree" }}
+  {{ $scratch := .scratch }}
+  {{ $currentScope := .scope }}
+  
+  {{/* Add the current page/section itself to the list */}}
+  {{ $scratch.Add "bookList" (slice $currentScope) }}
+
+  {{/* If it's a section, process its children */}}
+  {{ if $currentScope.IsSection }}
+    {{ range $currentScope.Pages.ByWeight }}
+      {{ template "walk-tree" dict "scratch" $scratch "scope" . }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+
+{{/* 3. Execute the walker starting from Root */}}
+{{ template "walk-tree" dict "scratch" $scratch "scope" $root }}
+
+{{/* 4. Find our place in the list */}}
+{{ $flatList := $scratch.Get "bookList" }}
+{{ $currentIndex := -1 }}
+
+{{ range $i, $p := $flatList }}
+  {{ if eq $p.RelPermalink $current.RelPermalink }}
+    {{ $currentIndex = $i }}
+  {{ end }}
+{{ end }}
+
+{{/* 5. Determine Neighbors */}}
+{{ if gt $currentIndex 0 }}
+  {{ $prev = index $flatList (sub $currentIndex 1) }}
+{{ end }}
+
+{{ if and (ge $currentIndex 0) (lt $currentIndex (sub (len $flatList) 1)) }}
+  {{ $next = index $flatList (add $currentIndex 1) }}
+{{ end }}
+
+
+<!-- Render the Meta and Navigation -->
+<div class="docs-footer-meta">
+  <p>Last updated on {{ .Lastmod.Format "January 2, 2006" }}</p>
+</div>
+
+<div class="pagination-container">
+  
+  <div class="pagination-left">
+    {{ if $prev }}
+    <a href="{{ $prev.RelPermalink }}" class="pagination-link">
+      <span class="pagination-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+        </svg>
+      </span>
+      <span>{{ $prev.Title }}</span>
+    </a>
+    {{ end }}
+  </div>
+
+  <div class="pagination-right">
+    {{ if $next }}
+    <a href="{{ $next.RelPermalink }}" class="pagination-link">
+      <span>{{ $next.Title }}</span>
+      <span class="pagination-icon">
+         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+        </svg>
+      </span>
+    </a>
+    {{ end }}
+  </div>
+
+</div>

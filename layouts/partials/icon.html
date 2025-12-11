@@ -1,0 +1,6 @@
+{{ $name := . }}
+{{ if and $name (index site.Data.icons $name) }}
+  {{ index site.Data.icons $name | safeHTML }}
+{{ else }}
+  <span style="display:none;" data-error="Icon '{{ $name }}' not found"></span>
+{{ end }}

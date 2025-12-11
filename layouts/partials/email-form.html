@@ -1,0 +1,26 @@
+<div class="email-capture-card">
+  
+  <!-- Changed ID to Class: js-email-form-wrapper -->
+  <div class="js-email-form-wrapper">
+    <h4 class="email-capture-title">Stay Updated</h4>
+    <p class="email-capture-desc">Get the latest posts delivered right to your inbox.</p>
+    
+    <!-- Changed ID to Class: js-email-capture-form -->
+    <form class="js-email-capture-form" action="{{ site.Params.newsletter.action }}" method="POST">
+      <input type="email" name="email" class="email-capture-input" placeholder="you@example.com" aria-label="Email Address" required>
+      <button type="submit" class="email-capture-btn">Subscribe</button>
+    </form>
+  </div>
+
+  <!-- Changed ID to Class: js-email-success-message -->
+  <div class="js-email-success-message hidden" style="text-align: center; padding: 1rem 0;">
+    <div style="color: #10b981; margin-bottom: 0.5rem;">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" width="32" height="32" style="display:inline-block;">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+    </div>
+    <h4 class="email-capture-title">Subscribed!</h4>
+    <p class="email-capture-desc">Thank you for joining.</p>
+  </div>
+
+</div>

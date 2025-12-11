@@ -1,0 +1,97 @@
+{{ define "toc" }}
+  {{ if .TableOfContents }}
+    <div class="toc-container">
+      <div class="toc-header">On this page</div>
+      {{ .TableOfContents }}
+    </div>
+  {{ end }}
+{{ end }}
+
+{{ define "main" }}
+<!-- Removed 'prose-centered' so it aligns correctly with the sidebar -->
+<article class="prose">
+  
+  <nav aria-label="Breadcrumb" class="breadcrumb">
+    {{ range .Ancestors.Reverse }}
+      {{ if not .IsHome }}
+        <a href="{{ .RelPermalink }}" class="breadcrumb-link">{{ .Title }}</a>
+        <span class="breadcrumb-sep">
+          {{ partial "icon.html" "chevron-right" }}
+        </span>
+      {{ end }}
+    {{ end }}
+    <span class="breadcrumb-active">{{ .Title }}</span>
+  </nav>
+
+  <h1>{{ .Title }}</h1>
+
+    <div class="post-meta-single">
+      <span>{{ .Date.Format "January 2, 2006" }}</span>
+      
+      {{ if .Params.authors }}
+        <span class="meta-sep">&middot;</span>
+        {{ range .Params.authors }}
+          
+          {{/* Logic: Check if it's a key (string) or inline data (map) */}}
+          {{ $author := . }}
+          {{ if not (reflect.IsMap .) }}
+            {{ $author = index site.Data.authors . }}
+          {{ end }}
+
+          {{/* Render if valid data found */}}
+          {{ with $author }}
+            <a href="{{ .link }}" class="post-author-container" target="_blank" rel="noopener">
+              <img src="{{ .image }}" alt="{{ .name }}" class="post-author-img" loading="lazy">
+              <span>{{ .name }}</span>
+            </a>
+          {{ end }}
+
+        {{ end }}
+      {{ end }}
+    </div>
+
+    {{ if or .Params.categories .Params.tags }}
+      <div class="post-taxonomies single-post-taxonomies">
+        {{ range .Params.categories }}
+          <a href="/categories/{{ . | urlize }}" class="post-taxonomy-pill category">{{ . }}</a>
+        {{ end }}
+        {{ range .Params.tags }}
+          <a href="/tags/{{ . | urlize }}" class="post-taxonomy-pill tag">#{{ . }}</a>
+        {{ end }}
+      </div>
+    {{ end }}
+    
+    <div class="content-body">
+      
+      {{/* 1. Description */}}
+      {{ if .Params.description }}
+        <p class="post-description">{{ .Params.description }}</p>
+      {{ end }}
+
+      {{/* 2. Responsive Video */}}
+      {{ if .Params.video }}
+        {{ $videoID := "" }}
+        {{ if in .Params.video "youtu.be/" }}
+          {{ $videoID = index (last 1 (split .Params.video "/")) 0 }}
+        {{ else if in .Params.video "v=" }}
+          {{ $query := index (split .Params.video "v=") 1 }}
+          {{ $videoID = index (split $query "&") 0 }}
+        {{ else }}
+          {{ $videoID = .Params.video }}
+        {{ end }}
+
+        <div class="video-container">
+          <iframe 
+            src="https://www.youtube.com/embed/{{ $videoID }}" 
+            title="YouTube video player" 
+            frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+            allowfullscreen>
+          </iframe>
+        </div>
+      {{ end }}
+
+      {{ .Content }}
+    </div>
+</article>
+{{ end }}

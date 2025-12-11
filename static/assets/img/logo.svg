@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="432px" height="432px" viewBox="0 0 432 432" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 55.2 (78181) - https://sketchapp.com -->
+    <title>logo</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <rect id="path-1" x="0" y="0" width="432" height="432"></rect>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="logo">
+            <mask id="mask-2" fill="white">
+                <use xlink:href="#path-1"></use>
+            </mask>
+            <use id="Rectangle" fill-opacity="0.01" fill="#FFFFFF" fill-rule="nonzero" xlink:href="#path-1"></use>
+            <g id="blocks" mask="url(#mask-2)">
+                <g transform="translate(-33.000000, 19.000000)" id="pentagon-link">
+                    <g transform="translate(147.750000, 0.391250)">
+                        <polygon id="pentagon" fill="#FF2E63" fill-rule="nonzero" points="101.25 0.16875 202.3775 73.64125 163.75 192.52375 38.75 192.52375 0.1225 73.64125"></polygon>
+                    </g>
+                    <g transform="translate(363.282960, 295.282524) rotate(120.000000) translate(-363.282960, -295.282524) translate(261.782960, 198.782524)">
+                        <polygon id="pentagon" fill="#FF2E63" fill-rule="nonzero" points="101.23913 0.173208292 202.36663 73.6457083 163.73913 192.528208 38.7391303 192.528208 0.111630322 73.6457083"></polygon>
+                    </g>
+                    <g transform="translate(134.465466, 294.837869) rotate(-120.000000) translate(-134.465466, -294.837869) translate(32.965466, 198.337869)">
+                        <polygon id="pentagon" fill="#FF2E63" fill-rule="nonzero" points="101.25 0.16875 202.3775 73.64125 163.75 192.52375 38.75 192.52375 0.1225 73.64125"></polygon>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

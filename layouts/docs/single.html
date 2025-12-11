@@ -1,0 +1,147 @@
+{{ define "toc" }}
+  {{ if .TableOfContents }}
+    <div class="toc-container">
+      <div class="toc-header">On this page</div>
+      {{ .TableOfContents }}
+    </div>
+  {{ end }}
+{{ end }}
+
+{{ define "main" }}
+<article>
+  
+  <!-- Breadcrumb -->
+  <nav aria-label="Breadcrumb" class="breadcrumb">
+    {{ range .Ancestors.Reverse }}
+      {{ if not .IsHome }}
+        <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+        <span class="breadcrumb-sep">
+          {{ partial "icon.html" "chevron-right" }}
+        </span>
+      {{ end }}
+    {{ end }}
+    <span class="breadcrumb-active">{{ .Title }}</span>
+  </nav>
+
+  <div class="prose">
+    <h1>{{ .Title }}</h1>
+    {{ .Content }}
+  </div>
+
+  <!-- FEEDBACK WIDGET START -->
+  <div class="feedback-wrapper">
+    <div id="feedback-initial" class="feedback-block">
+      <div class="feedback-header">
+        <div>
+          <h3 class="feedback-title">Did you find this doc useful?</h3>
+          <p class="feedback-subtitle">Your feedback helps me improve my docs.</p>
+        </div>
+        <div class="feedback-buttons">
+          <button type="button" class="btn-thumb btn-thumb-up" aria-label="Thumbs Up" onclick="handleRate('Thumbs Up')">
+            {{ partial "icon.html" "thumbs-up" }}
+          </button>
+          <button type="button" class="btn-thumb btn-thumb-down" aria-label="Thumbs Down" onclick="handleRate('Thumbs Down')">
+            {{ partial "icon.html" "thumbs-down" }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Detail Form (Hidden by default) -->
+      <div id="feedback-detail" class="hidden" style="margin-top: 1.5rem;">
+        <textarea id="feedback-message" class="feedback-textarea" placeholder="What else would you like to tell me about this doc?" rows="4"></textarea>
+        <button type="button" class="btn-primary" onclick="submitFeedback()">Send</button>
+      </div>
+    </div>
+
+    <!-- Success Message (Hidden by default) -->
+    <div id="feedback-success" class="feedback-block hidden">
+      <div class="feedback-header">
+        <div>
+          <h3 class="feedback-title">Got it!</h3>
+          <p class="feedback-subtitle">Thanks for your feedback.</p>
+        </div>
+        <!-- Static Thumbs to mimic screenshot layout -->
+        <div class="feedback-buttons" style="opacity: 0.8; pointer-events: none;">
+          <div class="btn-thumb btn-thumb-up" id="success-icon-up">
+             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.633 10.5c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 012.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 00.322-1.672V3a2.25 2.25 0 012.25 2.25c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 01-2.649 7.521c-.388.482-.987.729-1.605.729H13.48c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 00-1.423-.23H5.904M14.25 9h2.25M5.904 18.75c.083.205.173.405.27.602.197.4-.078.898-.523.898h-.908c-.889 0-1.713-.518-1.972-1.368a12 12 0 01-.521-3.507c0-1.553.295-3.036.831-4.396C3.387 10.203 4.167 9.75 5 9.75h1.053c.472 0 .745.556.5.96a8.958 8.958 0 00-1.302 4.665c0 1.194.232 2.333.654 3.375z" /></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let feedbackRating = null;
+
+    function handleRate(rating) {
+      feedbackRating = rating;
+      const detail = document.getElementById('feedback-detail');
+      const btnUp = document.querySelector('.btn-thumb-up');
+      const btnDown = document.querySelector('.btn-thumb-down');
+
+      // Visual Selection
+      if (rating === 'Thumbs Up') {
+        btnUp.classList.add('active');
+        btnDown.classList.remove('active');
+        btnDown.style.opacity = '0.5';
+        btnUp.style.opacity = '1';
+      } else {
+        btnDown.classList.add('active');
+        btnUp.classList.remove('active');
+        btnUp.style.opacity = '0.5';
+        btnDown.style.opacity = '1';
+      }
+
+      // Show Textarea
+      detail.classList.remove('hidden');
+    }
+
+    async function submitFeedback() {
+      const message = document.getElementById('feedback-message').value;
+      const initialView = document.getElementById('feedback-initial');
+      const successView = document.getElementById('feedback-success');
+      const submitBtn = document.querySelector('.btn-primary');
+
+      submitBtn.innerText = "Sending...";
+      submitBtn.disabled = true;
+
+      // Updated Payload with Hardcoded Email
+      const payload = {
+        email: "nefer@radicalredrocket.com",
+        FeedbackRating: feedbackRating,
+        FeedbackMessage: message,
+        FeedbackPage: window.location.href
+      };
+
+      try {
+        await fetch("https://api.encharge.io/v1/hooks/f32c94cb-12a3-4afd-bd67-2bc8c05c74c6", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payload)
+        });
+      } catch (err) {
+        console.error("Feedback error", err);
+        // We continue to success screen even on network error to not frustrate user
+      }
+
+      // Smooth Transition
+      initialView.classList.add('hidden');
+      successView.classList.remove('hidden');
+      
+      // Update success icon to match selection
+      const successIcon = document.getElementById('success-icon-up');
+      if (feedbackRating === 'Thumbs Down') {
+        successIcon.classList.remove('btn-thumb-up');
+        successIcon.classList.add('btn-thumb-down');
+        successIcon.innerHTML = document.querySelector('.btn-thumb-down').innerHTML;
+      }
+    }
+  </script>
+  <!-- FEEDBACK WIDGET END -->
+
+  {{ partial "docs-pagination.html" . }}
+
+</article>
+{{ end }}

@@ -1,0 +1,30 @@
+{{ define "main" }}
+<div class="hero">
+  <h1>{{ site.Title }}</h1>
+  <p>{{ site.Params.description | default "A high-performance documentation template built with plain vanilla HTML, CSS, and Hugo." }}</p>
+  
+  <div class="hero-buttons">
+    <a href="/docs" class="btn-primary">Get Started</a>
+    <a href="#" target="_blank" class="btn-outline">GitHub</a>
+  </div>
+</div>
+
+<div class="features-grid">
+  
+  <div class="feature-card">
+    <h3 class="feature-title">Fast by Default</h3>
+    <p class="feature-desc">Powered by Hugo and Vanilla JS. Zero heavy dependencies. The search is instant.</p>
+  </div>
+
+  <div class="feature-card">
+    <h3 class="feature-title">Dark Mode</h3>
+    <p class="feature-desc">Native support for System, Light, and Dark preferences with no screen flickering.</p>
+  </div>
+
+  <div class="feature-card">
+    <h3 class="feature-title">Full Text Search</h3>
+    <p class="feature-desc">Client-side offline search using FlexSearch. Indexing is automatic.</p>
+  </div>
+
+</div>
+{{ end }}

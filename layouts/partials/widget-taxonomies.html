@@ -1,0 +1,56 @@
+{{/* 
+  Usage: 
+  {{ partial "widget-taxonomies.html" (dict "style" "pills") }}
+  {{ partial "widget-taxonomies.html" (dict "style" "list") }}
+*/}}
+
+{{ $style := .style | default "pills" }}
+
+{{/* --- CATEGORIES --- */}}
+{{ if site.Taxonomies.categories }}
+  <div class="sidebar-section-title">Categories</div>
+  
+  {{ if eq $style "list" }}
+    <ul class="sidebar-list">
+  {{ else }}
+    <div class="post-taxonomies" style="margin-bottom: 1rem;">
+  {{ end }}
+
+    {{ range $name, $taxonomy := site.Taxonomies.categories }}
+      {{ if eq $style "list" }}
+        <li>
+          <a href="{{ "/categories/" | relLangURL }}{{ $name | urlize }}" class="sidebar-link">
+            {{ $name | humanize }} <span class="count-label">({{ $taxonomy.Count }})</span>
+          </a>
+        </li>
+      {{ else }}
+        <a href="{{ "/categories/" | relLangURL }}{{ $name | urlize }}" class="post-taxonomy-pill category">
+          {{ $name | humanize }} <span class="count-label">({{ $taxonomy.Count }})</span>
+        </a>
+      {{ end }}
+    {{ end }}
+
+  {{ if eq $style "list" }}</ul>{{ else }}</div>{{ end }}
+{{ end }}
+
+{{/* --- TAGS --- */}}
+{{ if site.Taxonomies.tags }}
+  {{ if eq $style "list" }}<div class="sidebar-spacer"></div>{{ end }}
+  
+  <div class="sidebar-section-title">Tags</div>
+  
+  {{ if eq $style "list" }}
+    <!-- Sidebar Tags are usually pills too, but inside a container padding -->
+    <div class="post-taxonomies" style="padding: 0 0.5rem;">
+  {{ else }}
+    <div class="post-taxonomies">
+  {{ end }}
+
+    {{ range $name, $taxonomy := site.Taxonomies.tags }}
+      <a href="{{ "/tags/" | relLangURL }}{{ $name | urlize }}" class="post-taxonomy-pill tag">
+        #{{ $name }} <span class="count-label">({{ $taxonomy.Count }})</span>
+      </a>
+    {{ end }}
+  
+  </div>
+{{ end }}

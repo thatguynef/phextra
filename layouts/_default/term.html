@@ -1,0 +1,60 @@
+{{ define "main" }}
+<div class="prose post-list-container">
+  
+  <h1>
+    {{ if eq .Type "tags" }}#{{ .Title | lower }}{{ else }}{{ .Title }}{{ end }}
+    <span class="count-label">({{ len .Pages }})</span>
+  </h1>
+  
+  <div class="post-intro">{{ .Content }}</div>
+
+  <!-- 1. Mobile Sidebar -->
+  <div class="mobile-sidebar-container">
+    {{ partial "widget-taxonomies.html" (dict "style" "pills") }}
+  </div>
+
+  <!-- Blog List -->
+  <div class="post-list">
+    {{ range .Pages }}
+       <!-- ... (Keep post item loop same as list.html) ... -->
+       <div class="post-item">
+        <a href="{{ .RelPermalink }}" class="post-title">{{ .Title }}</a>
+        <div class="post-meta">
+          {{ .Date.Format "January 2, 2006" }} &middot; {{ .ReadingTime }} min read
+        </div>
+        {{ if or .Params.categories .Params.tags }}
+        <div class="post-taxonomies">
+          {{ range .Params.categories }}
+            {{ $name := . }}
+            {{ $count := 0 }}
+            {{ with index site.Taxonomies.categories $name }}{{ $count = .Count }}{{ end }}
+            <a href="{{ "/categories/" | relLangURL }}{{ $name | urlize }}" class="post-taxonomy-pill category">
+              {{ $name }} 
+            </a>
+          {{ end }}
+          {{ range .Params.tags }}
+            {{ $name := . }}
+            {{ $count := 0 }}
+            {{ with index site.Taxonomies.tags $name }}{{ $count = .Count }}{{ end }}
+            <a href="{{ "/tags/" | relLangURL }}{{ $name | urlize }}" class="post-taxonomy-pill tag">
+              #{{ $name }} 
+            </a>
+          {{ end }}
+        </div>
+        {{ end }}
+        {{ if .Params.description }}
+        <div class="post-summary">{{ .Params.description }}</div>
+        {{ end }}
+        <a href="{{ .RelPermalink }}" class="post-readmore">Read more →</a>
+      </div>
+    {{ end }}
+  </div>
+</div>
+{{ end }}
+
+{{ define "toc" }}
+<div class="toc-container">
+  <!-- 2. Right Sidebar -->
+  {{ partial "widget-taxonomies.html" (dict "style" "list") }}
+</div>
+{{ end }}

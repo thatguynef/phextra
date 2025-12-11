@@ -1,0 +1,90 @@
+baseURL = 'http://localhost:1313'
+languageCode = 'en-us'
+title = 'Radical Red Rocket'
+theme = [] # No theme, we are building custom
+
+[params.banner]
+  enable = true
+  dismissable = true
+  key = "banner-v1" 
+  # You can use HTML here.
+  content = 'Radical Red Rocket is here! 🎉 Discover <a href="#" style="text-decoration:underline;">what’s new</a>'
+
+[params.newsletter]
+  # Replace this with your specific Encharge Form URL
+  action = "https://api.encharge.io/v1/hooks/b50d5b93-37e1-43ce-aa37-79d5a33b5ec9" 
+
+[params.ai]
+  enable = true
+  url = "#"
+  label = "Ask AI"
+  # icon = "sparkles"
+
+# 1. Syntax Highlighting (Chroma)
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true # Allows inline HTML if needed
+  [markup.highlight]
+    codeFences = true
+    guessSyntax = true
+    lineNos = false
+    style = "github" # Clean, light style
+    noClasses = false # Use classes so we can control Dark Mode via CSS
+
+# 2. Search Configuration
+# We define a custom output format "SearchIndex" that produces a JSON file.
+[outputFormats]
+  [outputFormats.SearchIndex]
+    mediaType = "application/json"
+    baseName = "index"
+    isPlainText = true
+    notAlternative = true
+
+# Apply the SearchIndex output to the home page so it aggregates everything
+[outputs]
+  home = ["HTML", "RSS", "SearchIndex"]
+
+# 3. Layout Logic
+# This ensures /docs, /docs-two, or any folder you add here shares the documentation layout.
+[[cascade]]
+  type = "docs"
+  [cascade._target]
+    path = "/docs/**"
+
+[[cascade]]
+  type = "docs"
+  [cascade._target]
+    path = "/api/**"
+
+[menu]
+  # --- TOP BAR (Global) ---
+  [[menu.global]]
+    name = "About"
+    url = "/about"
+    weight = 10
+
+  [[menu.global]]
+    name = "Posts"
+    url = "/posts"
+    weight = 20
+
+  [[menu.global]]
+    name = "Portfolio"
+    url = "/portfolio"
+    weight = 30
+    [menu.global.params]
+      style = ""
+
+  # --- BOTTOM BAR (Context) ---
+  [[menu.sections]]
+    name = "Docs"
+    identifier = "docs"
+    url = "/docs"
+    weight = 1
+
+  [[menu.sections]]
+    name = "Integrations"
+    identifier = "integrations"
+    url = "/integrations"
+    weight = 2

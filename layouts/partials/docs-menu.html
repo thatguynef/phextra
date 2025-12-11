@@ -1,0 +1,44 @@
+{{ $currentPage := .context }}
+{{ $scope := .scope }}
+
+<ul class="sidebar-list">
+  {{ range $scope.Pages.ByWeight }}
+    
+    {{/* State Checks */}}
+    {{ $isActive := eq . $currentPage }}
+    {{ $isAncestor := .IsAncestor $currentPage }}
+    {{ $shouldOpen := or $isActive $isAncestor }}
+
+    <li>
+      {{ if .IsSection }}
+        <!-- FOLDER ROW -->
+        <div class="sidebar-row {{ if $isActive }}active{{ end }}">
+          
+          <!-- The Link -->
+          <a href="{{ .RelPermalink }}" class="sidebar-row-link">
+            {{ .Title }}
+          </a>
+
+          <!-- The Toggle Arrow -->
+          <!-- We add 'open' class if it's an ancestor so it renders rotated on load -->
+          <button class="sidebar-toggle-btn {{ if $shouldOpen }}open{{ end }}" aria-label="Toggle {{ .Title }}">
+            {{ partial "icon.html" "chevron-right" }}
+          </button>
+        </div>
+        
+        <!-- CHILDREN CONTAINER -->
+        <!-- We add 'open' class if it's an ancestor so it renders visible on load -->
+        <div class="sidebar-nested-group {{ if $shouldOpen }}open{{ end }}">
+          {{ partial "docs-menu.html" (dict "context" $currentPage "scope" .) }}
+        </div>
+
+      {{ else }}
+        <!-- FILE LINK -->
+        <a href="{{ .RelPermalink }}" 
+           class="sidebar-link {{ if $isActive }}active{{ end }}">
+          {{ .Title }}
+        </a>
+      {{ end }}
+    </li>
+  {{ end }}
+</ul>

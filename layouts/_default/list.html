@@ -1,0 +1,19 @@
+{{ define "main" }}
+<div class="prose list-container">
+  <h1>{{ .Title }}</h1>
+  <div class="content-body">
+    {{ .Content }}
+  </div>
+
+  <!-- If this section has sub-pages, list them simply -->
+  {{ if .Pages }}
+  <hr class="list-hr">
+  <h3>Section Contents:</h3>
+  <ul class="list-ul">
+    {{ range .Pages }}
+    <li><a href="{{ .RelPermalink }}" class="list-item-title">{{ .Title }}</a></li>
+    {{ end }}
+  </ul>
+  {{ end }}
+</div>
+{{ end }}

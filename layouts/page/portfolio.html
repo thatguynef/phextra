@@ -1,0 +1,24 @@
+{{ define "main" }}
+<div class="portfolio-container">
+  
+  <div class="portfolio-header">
+    <h1 class="portfolio-h1">{{ .Title }}</h1>
+    <p class="portfolio-desc">{{ .Description }}</p>
+  </div>
+
+  <div class="portfolio-grid">
+    {{ range site.Data.portfolio }}
+      <a href="{{ .url }}" target="_blank" rel="noopener" class="portfolio-card">
+        <div class="portfolio-img-container">
+          <!-- Using a placeholder if image fails or is missing, otherwise real image -->
+          <img src="{{ .image }}" alt="{{ .title }}" loading="lazy" class="portfolio-img">
+        </div>
+        <div class="portfolio-card-footer">
+          <span class="portfolio-card-title">{{ .title }}</span>
+        </div>
+      </a>
+    {{ end }}
+  </div>
+
+</div>
+{{ end }}

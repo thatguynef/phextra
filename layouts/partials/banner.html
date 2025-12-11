@@ -1,0 +1,26 @@
+{{ if site.Params.banner.enable }}
+<div id="site-banner" class="banner" role="alert" data-key="{{ site.Params.banner.key | default "global-banner" }}">
+  
+  <div class="banner-content">
+    {{ site.Params.banner.content | safeHTML }}
+  </div>
+
+  {{ if site.Params.banner.dismissable }}
+  <button id="banner-close-btn" class="banner-close" aria-label="Dismiss banner">
+    {{ partial "icon.html" "banner-close" }}
+  </button>
+  {{ end }}
+
+</div>
+
+<script>
+  (function() {
+    // Immediately check if banner should be hidden to prevent Layout Shift
+    var key = document.getElementById('site-banner').getAttribute('data-key');
+    var storageKey = 'hugo-banner-closed-' + key;
+    if (sessionStorage.getItem(storageKey)) {
+      document.getElementById('site-banner').classList.add('banner-hidden');
+    }
+  })();
+</script>
+{{ end }}

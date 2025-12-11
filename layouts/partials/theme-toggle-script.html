@@ -1,0 +1,22 @@
+<script>
+  (function() {
+    const LOCAL_STORAGE_KEY = 'hugo-theme-mode';
+    
+    // 1. Check local storage
+    const localTheme = localStorage.getItem(LOCAL_STORAGE_KEY);
+
+    // 2. Default to 'dark' if nothing is stored
+    const activeTheme = localTheme || 'dark';
+
+    // 3. Apply class
+    // Our CSS uses the .dark class for dark mode.
+    if (activeTheme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+
+    // 4. Save to global for UI sync
+    window.__theme = activeTheme;
+  })();
+</script>

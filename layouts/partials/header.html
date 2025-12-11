@@ -1,0 +1,117 @@
+<div class="site-header-group">
+  
+  <!-- ROW 1: Global Header -->
+  <header class="header-global">
+    <div class="header-inner">
+      
+      <!-- Left: Logo -->
+      <div class="header-left">
+        <a href="/" class="header-logo">
+          <img id="logo-img" src="/assets/img/logo.svg" alt="{{ site.Title }} Logo" style="width: 25px; vertical-align: bottom; margin-right: 3px;">
+          <span id="logo">{{ site.Title }}</span>
+        </a>
+      </div>
+
+      <!-- Center: Search & AI (Desktop Only) -->
+      <div class="header-center">
+        <div class="header-search-group">
+          
+          <!-- Existing Search -->
+          <div class="search-container">
+            <div class="search-input-wrapper">
+              <span class="search-icon-placeholder">
+                {{ partial "icon.html" "search" }}
+              </span>
+              <input type="text" id="search-input-desktop" class="search-input" placeholder="Search..." autocomplete="off">
+              <span class="search-shortcut-hint">⌘K</span>
+            </div>
+            <div id="search-results-desktop" class="search-results"></div>
+          </div>
+
+          <!-- Desktop AI Button -->
+          {{ if site.Params.ai.enable }}
+            <!-- Added 'js-ask-ai-trigger', removed ID -->
+            <a href="#" class="btn-secondary js-ask-ai-trigger" aria-label="Ask AI">
+              {{ partial "icon.html" "sparkles" }}
+              <span>{{ site.Params.ai.label }}</span>
+            </a>
+          {{ end }}
+
+        </div>
+      </div>
+
+      <!-- Right: Global Nav, Mobile AI & Toggle -->
+      <nav class="header-right">
+        <div class="desktop-global-links">
+          {{ range site.Menus.global }}
+            {{/* Safe active detection – works on ALL Hugo versions */}}
+            {{ $isActive := false }}
+            {{ if $.IsHome }}
+              {{ $isActive = eq .URL "/" }}
+            {{ else }}
+              {{ $currentPath := $.RelPermalink }}
+              {{ $menuPath    := .URL | relLangURL }}
+
+              {{/* Exact match */}}
+              {{ if eq $currentPath $menuPath }}
+                {{ $isActive = true }}
+              {{/* Section/ancestor match – e.g. /posts/anything → highlights "Posts" */}}
+              {{ else if and (ne $menuPath "/") (hasPrefix $currentPath $menuPath) }}
+                {{ $isActive = true }}
+              {{ end }}
+            {{ end }}
+
+            <a 
+              href="{{ .URL | relLangURL }}"
+              class="header-link-global{{ if .Params.style }} {{ .Params.style }}{{ end }}{{ if $isActive }} active{{ end }}"
+              {{ if $isActive }}aria-current="page"{{ end }}>
+              {{ .Name | safeHTML }}
+            </a>
+          {{ end }}
+        </div>
+
+        <!-- Mobile AI Icon -->
+        {{ if site.Params.ai.enable }}
+          <!-- Added 'js-ask-ai-trigger', removed ID -->
+          <a href="#" class="btn-icon mobile-ai-trigger js-ask-ai-trigger" aria-label="Ask AI">
+            {{ partial "icon.html" "sparkles" }}
+          </a>
+        {{ end }}
+
+
+        <!-- Theme Toggle -->
+        <button class="btn-icon" onclick="cycleTheme()" aria-label="Toggle Theme">
+          <span class="theme-icon-sun hidden">{{ partial "icon.html" "sun" }}</span>
+          <span class="theme-icon-moon hidden">{{ partial "icon.html" "moon" }}</span>
+        </button>
+      </nav>
+        
+      <!-- Mobile Menu Trigger -->
+      <button class="btn-icon mobile-menu-trigger" id="mobile-menu-btn" aria-label="Menu">
+        <div class="hamburger-box">
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+        </div>
+      </button>
+
+    </div>
+  </header>
+
+  <!-- ROW 2: Section Navigation -->
+  <div class="header-sections">
+    <div class="header-inner">
+      <nav class="section-nav">
+        {{ $currentPage := . }}
+        {{ range site.Menus.sections }}
+          {{ $isActive := or ($currentPage.IsMenuCurrent "sections" .) ($currentPage.HasMenuCurrent "sections" .) }}
+          {{ if eq .Identifier "docs" }}{{ if eq $currentPage.Type "docs" }}{{ $isActive = true }}{{ end }}{{ end }}
+          
+          <a href="{{ .URL }}" class="section-link {{ if $isActive }}active{{ end }}">
+            {{ .Name }}
+          </a>
+        {{ end }}
+      </nav>
+    </div>
+  </div>
+</div>
